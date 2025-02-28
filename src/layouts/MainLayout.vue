@@ -1,7 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const appVersion = ref('')
+const { locale } = useI18n({ useScope: 'global' })
+const localeOptions = [
+  { value: 'en-US', label: 'English' },
+  { value: 'bg-BG', label: 'Български' },
+]
 
 onMounted(() => {
   if (window.electron && window.electron.getAppVersion) {
@@ -36,21 +42,31 @@ const toggleMaximizeApp = () => {
           <q-icon size="sm" name="mdi-message-text-fast-outline" />
         </div>
         <div class="cursor-pointer non-selectable q-mr-sm text-large">
-          File
+          {{ $t('File') }}
           <q-menu>
             <q-list dense style="min-width: 100px">
               <q-item clickable v-close-popup>
-                <q-item-section @click="closeApp">Quit</q-item-section>
+                <q-item-section @click="closeApp">{{ $t('Quit') }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
         </div>
         <div class="cursor-pointer non-selectable q-mr-sm text-large">
-          Help
+          {{ $t('Tools') }}
           <q-menu>
             <q-list dense style="min-width: 100px">
               <q-item clickable v-close-popup>
-                <q-item-section>About</q-item-section>
+                <q-item-section>{{ $t('Options') }}</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
+        <div class="cursor-pointer non-selectable q-mr-sm text-large">
+          {{ $t('Help') }}
+          <q-menu>
+            <q-list dense style="min-width: 100px">
+              <q-item clickable v-close-popup>
+                <q-item-section>{{ $t('About') }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -59,6 +75,20 @@ const toggleMaximizeApp = () => {
         <q-toolbar-title class="non-selectable draggable q-space text-subtitle1">
           MaxtradeAMS
         </q-toolbar-title>
+        <div>
+          <q-select
+            v-model="locale"
+            :options="localeOptions"
+            :label="$t('Change language')"
+            dense
+            borderless
+            emit-value
+            map-options
+            options-dense
+            style="min-width: 150px"
+          />
+        </div>
+        <q-separator vertical dark></q-separator>
         <q-btn @click="minimizeApp" dense flat icon="mdi-window-minimize" />
         <q-btn @click="toggleMaximizeApp" dense flat icon="mdi-window-maximize" />
         <q-btn @click="closeApp" dense flat icon="mdi-close" />
