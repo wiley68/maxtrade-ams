@@ -2,6 +2,9 @@ import { app, BrowserWindow } from 'electron'
 import path from 'node:path'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
+import Store from 'electron-store'
+
+const store = new Store()
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform()
@@ -10,14 +13,25 @@ const currentDir = fileURLToPath(new URL('.', import.meta.url))
 
 let mainWindow
 
-async function createWindow () {
+async function createWindow() {
+  // Възстановяване на запазеното състояние на прозореца
+  let windowState = store.get('windowState', {
+    width: 1000,
+    height: 600,
+    left: undefined,
+    top: undefined,
+    maximized: false
+  })
+
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(currentDir, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 600,
+    width: windowState.width,
+    height: windowState.height,
+    x: windowState.left,
+    y: windowState.top,
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
@@ -28,6 +42,10 @@ async function createWindow () {
       )
     }
   })
+
+  if (windowState.maximized) {
+    mainWindow.maximize()
+  }
 
   if (process.env.DEV) {
     await mainWindow.loadURL(process.env.APP_URL)
@@ -44,6 +62,18 @@ async function createWindow () {
       mainWindow.webContents.closeDevTools()
     })
   }
+
+  // Запазване на позицията и размера при затваряне
+  mainWindow.on('close', () => {
+    let bounds = mainWindow.getBounds()
+    store.set('windowState', {
+      width: bounds.width,
+      height: bounds.height,
+      left: bounds.x,
+      top: bounds.y,
+      maximized: mainWindow.isMaximized()
+    })
+  })
 
   mainWindow.on('closed', () => {
     mainWindow = null
