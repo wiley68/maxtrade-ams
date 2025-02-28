@@ -4,6 +4,18 @@ const closeApp = () => {
     window.electron.closeApp()
   }
 }
+
+const minimizeApp = () => {
+  if (window.electron && window.electron.minimizeApp) {
+    window.electron.minimizeApp()
+  }
+}
+
+const toggleMaximizeApp = () => {
+  if (window.electron && window.electron.toggleMaximizeApp) {
+    window.electron.toggleMaximizeApp()
+  }
+}
 </script>
 
 <template>
@@ -74,8 +86,8 @@ const closeApp = () => {
         </div>
         <q-toolbar-title> Title </q-toolbar-title>
         <q-space />
-        <q-btn dense flat icon="minimize" />
-        <q-btn dense flat icon="crop_square" />
+        <q-btn @click="minimizeApp" dense flat icon="minimize" />
+        <q-btn @click="toggleMaximizeApp" dense flat icon="crop_square" />
         <q-btn @click="closeApp" dense flat icon="close" />
       </q-toolbar>
     </q-header>

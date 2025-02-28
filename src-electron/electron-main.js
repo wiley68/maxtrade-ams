@@ -91,6 +91,22 @@ ipcMain.on('close-app', () => {
   }
 })
 
+ipcMain.on('minimize-app', () => {
+  if (mainWindow) {
+    mainWindow.minimize()
+  }
+})
+
+ipcMain.on('toggle-maximize-app', () => {
+  if (mainWindow) {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize()
+    } else {
+      mainWindow.maximize()
+    }
+  }
+})
+
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
     app.quit()
