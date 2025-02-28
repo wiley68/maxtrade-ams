@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu } from 'electron'
 import path from 'node:path'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
@@ -32,6 +32,7 @@ async function createWindow() {
     height: windowState.height,
     x: windowState.left,
     y: windowState.top,
+    frame: false,
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
@@ -45,6 +46,8 @@ async function createWindow() {
       ),
     },
   })
+
+  Menu.setApplicationMenu(null)
 
   if (windowState.maximized) {
     mainWindow.maximize()

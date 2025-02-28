@@ -84,8 +84,7 @@ const toggleMaximizeApp = () => {
             </q-list>
           </q-menu>
         </div>
-        <q-toolbar-title> Title </q-toolbar-title>
-        <q-space />
+        <q-toolbar-title class="non-selectable draggable q-space"> Title </q-toolbar-title>
         <q-btn @click="minimizeApp" dense flat icon="minimize" />
         <q-btn @click="toggleMaximizeApp" dense flat icon="crop_square" />
         <q-btn @click="closeApp" dense flat icon="close" />
@@ -108,3 +107,9 @@ const toggleMaximizeApp = () => {
     </q-footer>
   </q-layout>
 </template>
+
+<style scoped>
+.draggable {
+  -webkit-app-region: drag;
+}
+</style>
