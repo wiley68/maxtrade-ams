@@ -33,7 +33,7 @@ const toggleMaximizeApp = () => {
     <q-header bordered class="bg-primary text-white">
       <q-toolbar>
         <div class="cursor-pointer q-mr-sm">
-          <q-icon size="sm" name="menu" />
+          <q-icon size="sm" name="mdi-message-text-fast-outline" />
         </div>
         <div class="cursor-pointer non-selectable q-mr-sm text-large">
           File
@@ -45,13 +45,23 @@ const toggleMaximizeApp = () => {
             </q-list>
           </q-menu>
         </div>
+        <div class="cursor-pointer non-selectable q-mr-sm text-large">
+          Help
+          <q-menu>
+            <q-list dense style="min-width: 100px">
+              <q-item clickable v-close-popup>
+                <q-item-section>About</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
         <q-separator vertical dark></q-separator>
         <q-toolbar-title class="non-selectable draggable q-space text-subtitle1">
           MaxtradeAMS
         </q-toolbar-title>
-        <q-btn @click="minimizeApp" dense flat icon="minimize" />
-        <q-btn @click="toggleMaximizeApp" dense flat icon="crop_square" />
-        <q-btn @click="closeApp" dense flat icon="close" />
+        <q-btn @click="minimizeApp" dense flat icon="mdi-window-minimize" />
+        <q-btn @click="toggleMaximizeApp" dense flat icon="mdi-window-maximize" />
+        <q-btn @click="closeApp" dense flat icon="mdi-close" />
       </q-toolbar>
     </q-header>
 
