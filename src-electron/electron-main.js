@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
@@ -20,7 +20,7 @@ async function createWindow() {
     height: 600,
     left: undefined,
     top: undefined,
-    maximized: false
+    maximized: false,
   })
 
   /**
@@ -38,9 +38,12 @@ async function createWindow() {
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: path.resolve(
         currentDir,
-        path.join(process.env.QUASAR_ELECTRON_PRELOAD_FOLDER, 'electron-preload' + process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION)
-      )
-    }
+        path.join(
+          process.env.QUASAR_ELECTRON_PRELOAD_FOLDER,
+          'electron-preload' + process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION,
+        ),
+      ),
+    },
   })
 
   if (windowState.maximized) {
@@ -71,7 +74,7 @@ async function createWindow() {
       height: bounds.height,
       left: bounds.x,
       top: bounds.y,
-      maximized: mainWindow.isMaximized()
+      maximized: mainWindow.isMaximized(),
     })
   })
 
@@ -81,6 +84,12 @@ async function createWindow() {
 }
 
 app.whenReady().then(createWindow)
+
+ipcMain.on('close-app', () => {
+  if (mainWindow) {
+    mainWindow.close()
+  }
+})
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {

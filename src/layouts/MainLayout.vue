@@ -1,102 +1,98 @@
+<script setup>
+const closeApp = () => {
+  if (window.electron && window.electron.closeApp) {
+    window.electron.closeApp()
+  }
+}
+</script>
+
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh lpR fFf">
+    <q-header bordered class="bg-primary text-white">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <div class="cursor-pointer non-selectable">
+          File
+          <q-menu>
+            <q-list dense style="min-width: 100px">
+              <q-item clickable v-close-popup>
+                <q-item-section>Open...</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>New</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable>
+                <q-item-section>Preferences</q-item-section>
+                <q-item-section side>
+                  <q-icon name="keyboard_arrow_right" />
+                </q-item-section>
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+                <q-menu anchor="top end" self="top start">
+                  <q-list dense>
+                    <q-item v-for="n in 3" :key="n" clickable>
+                      <q-item-section>Submenu Label</q-item-section>
+                      <q-item-section side>
+                        <q-icon name="keyboard_arrow_right" />
+                      </q-item-section>
+                      <q-menu auto-close anchor="top end" self="top start">
+                        <q-list dense>
+                          <q-item v-for="n in 3" :key="n" clickable>
+                            <q-item-section>3rd level Label</q-item-section>
+                          </q-item>
+                        </q-list>
+                      </q-menu>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-item>
+              <q-separator />
+              <q-item clickable v-close-popup>
+                <q-item-section>Quit</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
+        <div class="cursor-pointer non-selectable">
+          Edit
+          <q-menu>
+            <q-list dense style="min-width: 100px">
+              <q-item clickable v-close-popup>
+                <q-item-section>Cut</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>Copy</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>Paste</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable v-close-popup>
+                <q-item-section>Select All</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
+        <q-toolbar-title> Title </q-toolbar-title>
+        <q-space />
+        <q-btn dense flat icon="minimize" />
+        <q-btn dense flat icon="crop_square" />
+        <q-btn @click="closeApp" dense flat icon="close" />
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer bordered class="bg-grey-8 text-white">
+      <q-toolbar>
+        <q-toolbar-title>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+          </q-avatar>
+          <div>Title</div>
+        </q-toolbar-title>
+      </q-toolbar>
+    </q-footer>
   </q-layout>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
-</script>
