@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, Tray } from 'electron'
 import path from 'node:path'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
@@ -6,15 +6,14 @@ import Store from 'electron-store'
 
 const store = new Store()
 
-// needed in case process is undefined under Linux
 const platform = process.platform || os.platform()
 
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
 
 let mainWindow
+let tray
 
 async function createWindow() {
-  // Възстановяване на запазеното състояние на прозореца
   let windowState = store.get('windowState', {
     width: 1000,
     height: 600,
@@ -23,11 +22,8 @@ async function createWindow() {
     maximized: false,
   })
 
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
-    icon: path.resolve(currentDir, 'icons/icon.png'), // tray icon
+    icon: path.resolve(currentDir, 'icons/icon.png'),
     width: windowState.width,
     height: windowState.height,
     x: windowState.left,
@@ -36,7 +32,6 @@ async function createWindow() {
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
-      // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: path.resolve(
         currentDir,
         path.join(
@@ -60,25 +55,31 @@ async function createWindow() {
   }
 
   if (process.env.DEBUGGING) {
-    // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools()
   } else {
-    // we're on production; no access to devtools pls
     mainWindow.webContents.on('devtools-opened', () => {
       mainWindow.webContents.closeDevTools()
     })
   }
 
-  // Запазване на позицията и размера при затваряне
-  mainWindow.on('close', () => {
-    let bounds = mainWindow.getBounds()
-    store.set('windowState', {
-      width: bounds.width,
-      height: bounds.height,
-      left: bounds.x,
-      top: bounds.y,
-      maximized: mainWindow.isMaximized(),
-    })
+  mainWindow.on('minimize', (event) => {
+    event.preventDefault()
+    mainWindow.hide()
+  })
+
+  mainWindow.on('close', (event) => {
+    if (!app.isQuiting) {
+      event.preventDefault()
+      let bounds = mainWindow.getBounds()
+      store.set('windowState', {
+        width: bounds.width,
+        height: bounds.height,
+        left: bounds.x,
+        top: bounds.y,
+        maximized: mainWindow.isMaximized(),
+      })
+      mainWindow.hide()
+    }
   })
 
   mainWindow.on('closed', () => {
@@ -86,7 +87,46 @@ async function createWindow() {
   })
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createWindow()
+  createTray()
+})
+
+function createTray() {
+  const trayIconPath = path.resolve(currentDir, 'icons/icon.png')
+  tray = new Tray(trayIconPath)
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Покажи',
+      click: () => {
+        mainWindow.show()
+      },
+    },
+    {
+      label: 'Скрий',
+      click: () => {
+        mainWindow.hide()
+      },
+    },
+    {
+      label: 'Изход',
+      click: () => {
+        tray.destroy()
+        app.isQuiting = true
+        setTimeout(() => {
+          app.exit()
+        }, 500)
+      },
+    },
+  ])
+
+  tray.setToolTip('MaxtradeAMS')
+  tray.setContextMenu(contextMenu)
+
+  tray.on('click', () => {
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+  })
+}
 
 ipcMain.on('close-app', () => {
   if (mainWindow) {
