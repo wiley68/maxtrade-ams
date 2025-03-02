@@ -61,7 +61,7 @@ const toggleMaximizeApp = () => {
           {{ $t('Tools') }}
           <q-menu>
             <q-list dense style="min-width: 100px">
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup @click="$router.push({ name: 'options' })">
                 <q-item-section>{{ $t('Options') }}</q-item-section>
               </q-item>
             </q-list>
@@ -71,7 +71,7 @@ const toggleMaximizeApp = () => {
           {{ $t('Help') }}
           <q-menu>
             <q-list dense style="min-width: 100px">
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup @click="$router.push({ name: 'about' })">
                 <q-item-section>{{ $t('About') }}</q-item-section>
               </q-item>
             </q-list>

@@ -77,6 +77,7 @@ async function createWindow() {
         left: bounds.x,
         top: bounds.y,
         maximized: mainWindow.isMaximized(),
+        nodeIntegration: false,
       })
       mainWindow.hide()
     }
