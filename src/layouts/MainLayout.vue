@@ -21,6 +21,12 @@ const closeApp = () => {
   }
 }
 
+const exitApp = () => {
+  if (window.electron && window.electron.exitApp) {
+    window.electron.exitApp()
+  }
+}
+
 const minimizeApp = () => {
   if (window.electron && window.electron.minimizeApp) {
     window.electron.minimizeApp()
@@ -46,7 +52,7 @@ const toggleMaximizeApp = () => {
           <q-menu>
             <q-list dense style="min-width: 100px">
               <q-item clickable v-close-popup>
-                <q-item-section @click="closeApp">{{ $t('Quit') }}</q-item-section>
+                <q-item-section @click="exitApp">{{ $t('Quit') }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -80,13 +86,18 @@ const toggleMaximizeApp = () => {
             v-model="locale"
             :options="localeOptions"
             :label="$t('Change language')"
+            label-color="grey-5"
             dense
             borderless
             emit-value
             map-options
             options-dense
             style="min-width: 150px"
-          />
+          >
+            <template v-slot:prepend>
+              <q-icon name="mdi-translate" color="grey-5" />
+            </template>
+          </q-select>
         </div>
         <q-separator vertical dark></q-separator>
         <q-btn @click="minimizeApp" dense flat icon="mdi-window-minimize" />

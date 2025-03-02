@@ -134,6 +134,16 @@ ipcMain.on('close-app', () => {
   }
 })
 
+ipcMain.on('exit-app', () => {
+  if (mainWindow) {
+    tray.destroy()
+    app.isQuiting = true
+    setTimeout(() => {
+      app.exit()
+    }, 500)
+  }
+})
+
 ipcMain.on('minimize-app', () => {
   if (mainWindow) {
     mainWindow.minimize()

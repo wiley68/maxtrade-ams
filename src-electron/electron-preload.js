@@ -7,4 +7,5 @@ contextBridge.exposeInMainWorld('electron', {
   minimizeApp: () => ipcRenderer.send('minimize-app'),
   toggleMaximizeApp: () => ipcRenderer.send('toggle-maximize-app'),
   getAppVersion: () => version,
+  exitApp: () => ipcRenderer.send('exit-app'),
 })
